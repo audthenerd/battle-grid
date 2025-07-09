@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
+    kotlin("kapt")
 }
 
 // Read API key from local.properties
@@ -27,7 +29,10 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         
         // Add API key to BuildConfig
-        buildConfigField("String", "ARCGIS_API_KEY", "\"${localProperties.getProperty("ARCGIS_API_KEY", "YOUR_API_KEY_HERE")}\"")
+        buildConfigField("String", "GOOGLE_MAPS_API_KEY", "\"${localProperties.getProperty("GOOGLE_MAPS_API_KEY", "YOUR_API_KEY_HERE")}\"")
+        
+        // Add API key to manifest placeholders
+        manifestPlaceholders["googleMapsApiKey"] = localProperties.getProperty("GOOGLE_MAPS_API_KEY", "YOUR_API_KEY_HERE")
     }
 
     buildTypes {
@@ -64,10 +69,17 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
     
-    // ArcGIS Maps SDK for Kotlin
-    implementation(libs.arcgis.maps.kotlin)
-    implementation(platform(libs.arcgis.maps.kotlin.toolkit.bom))
-    implementation(libs.arcgis.maps.kotlin.toolkit.geoview.compose)
+    // Room database
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    kapt(libs.androidx.room.compiler)
+    
+    // Google Maps for Compose
+    implementation(libs.maps.compose)
+    implementation(libs.play.services.maps)
+    
+    // Kotlinx Serialization
+    implementation(libs.kotlinx.serialization.json)
     
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
